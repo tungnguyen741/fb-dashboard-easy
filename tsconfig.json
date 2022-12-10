@@ -11,8 +11,11 @@
       "rootDir": ".",
       "baseUrl": ".",
       "allowSyntheticDefaultImports":true,
+      "paths":{
+        "@/*": ["src/*"]
+      }
     },
     "include": ["src"]
   }
   
-  
+    

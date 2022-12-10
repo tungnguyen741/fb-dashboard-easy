@@ -1,11 +1,8 @@
 const path = require('path');
 const { name, version, title } = require('./package.json');
 const webpack = require('webpack');
-const middleware = require("webpack-dev-middleware");
 const base64 = require('base-64');
 const utf8 = require('utf8');
-const svgToMiniDataURI = require('mini-svg-data-uri');
-const express = require("express");
 const chalk = require('chalk');
 
 
@@ -16,7 +13,6 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin') 
 const CircularDependencyPlugin = require('circular-dependency-plugin') // check import first letter uppercase
 const { CleanWebpackPlugin } = require('clean-webpack-plugin') // delete output when new build
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // OPTIMIZATION
 const TerserPlugin = require("terser-webpack-plugin"); // minimize js
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -24,7 +20,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin"); //minimize CSS
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 // DEVELOPMENT
 const DEV_SERVER_HTTPS = 'https';
-const DEV_SERVER_HOST = 'localhost.zalopay.vn';
+const DEV_SERVER_HOST = 'localhost.google.vn';
 const DEV_SERVER_PORT = 443;
 const MEDIA_FOLDER_DEV = '[path][name].[ext]';
 // BUILDING
@@ -194,10 +190,6 @@ module.exports = (env, argv) => {
                 filename: devMode ? "[name].css" : CSS_FOLDER,
                 chunkFilename: devMode ? "[id].css" : CSS_CHUNK_FOLDER,
             }),
-            // TODO:
-            // new ExtractTextPlugin({
-            //     filename: "static/css/[name].[contenthash].css"
-            // }),
         ]
 
     };

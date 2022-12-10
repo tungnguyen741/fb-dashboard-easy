@@ -1,12 +1,3 @@
-// / <reference types="react-scripts" />
-
-// declare module "*.svg" {
-//   import React = require("react");
-//   export const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
-//   const src: string;
-//   export default src;
-// }
-
 declare module "*.svg?url" {
   const content: string;
   export default content;
@@ -36,4 +27,18 @@ declare module "*.scss" {
 declare module "react/jsx-runtime" {
   const content: string;
   export default content;
+}
+
+declare module "my" {
+  global {
+    interface FB {}
+  }
+}
+
+declare namespace FB {
+  function ui(...arg: any[]): any;
+  function getLoginStatus(...arg: any[]): any;
+  function login(...arg: any[]): any;
+  function api(...arg: any[]): any;
+  function logout(...arg: any[]): any;
 }
