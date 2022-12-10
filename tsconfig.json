@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "noImplicitAny": false,
+      "module": "Esnext",
+      "target": "es5",
+      "jsx": "react-jsx",
+      "allowJs": true,
+      "moduleResolution": "node",
+      "outDir": "./dist",
+      "rootDir": ".",
+      "baseUrl": ".",
+      "allowSyntheticDefaultImports":true,
+      "paths":{
+        "@/*": ["src/*"]
+      }
+    },
+    "include": ["src"]
+  }
+  
+    

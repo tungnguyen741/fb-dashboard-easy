@@ -1,0 +1,65 @@
+@keyframes snow {
+  0% {
+    background-position-x: 0;
+    background-position-y: 0;
+  }
+  50% {
+    background-position-y: 40rem;
+  }
+  100% {
+    background-position-x: 40rem;
+    background-position-y: 80rem;
+  }
+}
+
+.App {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #cef1fc, #fafcfd);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .img {
+    img {
+      width: 1000px;
+      height: 1000px;
+    }
+  }
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.snowAfter {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  z-index: 10;
+  background-size: 40rem 40rem;
+  background-image: url("./assets/falling-snow1.png");
+  -webkit-animation: snow 18s linear infinite;
+  animation: snow 18s linear infinite;
+  transition: opacity 5s;
+}
+.snowABefore {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  z-index: 1;
+  background-size: 40rem 40rem;
+  background-image: url("./assets/falling-snow1.png");
+  -webkit-animation: snow 28s linear infinite;
+  animation: snow 18s linear infinite;
+  transition: opacity 5s;
+}

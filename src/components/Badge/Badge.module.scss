@@ -1,0 +1,17 @@
+.Badge {
+  border-radius: 8px;
+  text-align: center;
+  padding: 10px 20px;
+  width: 35px;
+  transition: background 0.25s;
+
+  &__success {
+    background: rgb(167, 238, 167);
+  }
+  &__danger {
+    background: rgb(221, 118, 118);
+  }
+  &__warning {
+    background: rgb(240, 240, 177);
+  }
+}
