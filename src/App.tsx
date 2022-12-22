@@ -134,7 +134,7 @@ const App: FC = () => {
   };
   const handleSendGA = () => {
     ReactGA.pageview(window.location.pathname + window.location.search);
-    ReactGA.event({ category: 'abc', action: 'xyz' })
+    ReactGA.event({ category: "abc", action: "xyz" });
   };
 
   return (
@@ -159,7 +159,13 @@ const App: FC = () => {
             <Button className={styles.FBbutton} onClick={handleLoginFB}>
               Đăng nhập với Facebook
             </Button>
-            <Button className={styles.FBbutton} onClick={handleSendGA}>
+            <Button
+              className={styles.FBbutton}
+              style={{
+                marginTop: "50px",
+              }}
+              onClick={handleSendGA}
+            >
               SEND GA
             </Button>
           </>
