@@ -1,3 +1,5 @@
+@use "src/assets/styles/functions" as fn;
+
 @keyframes snow {
   0% {
     background-position-x: 0;
@@ -17,19 +19,32 @@
   height: 100vh;
   background: linear-gradient(to bottom, #cef1fc, #fafcfd);
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // flex-direction: column;
+  // padding: fn.vw(20);
   .img {
     img {
       width: 1000px;
       height: 1000px;
     }
   }
-  img {
-    width: 30px;
-    height: 30px;
+
+  &::after {
+    @extend .snowABefore;
+  }
+  &::before {
+    @extend .snowAfter;
+  }
+
+  & .error {
+    color: #fff;
+    margin-top: fn.vw(20);
+    width: fn.vw(200);
+    height: fn.vw(12);
+    font-size: fn.vw(10);
+    opacity: 0.8;
   }
 }
 
@@ -43,10 +58,11 @@
   height: 100%;
   z-index: 10;
   background-size: 40rem 40rem;
-  background-image: url("./assets/falling-snow1.png");
+  background-image: url("./assets/images/falling-snow2.png");
   -webkit-animation: snow 18s linear infinite;
   animation: snow 18s linear infinite;
   transition: opacity 5s;
+  pointer-events: none;
 }
 .snowABefore {
   content: " ";
@@ -58,8 +74,69 @@
   height: 100%;
   z-index: 1;
   background-size: 40rem 40rem;
-  background-image: url("./assets/falling-snow1.png");
+  background-image: url("./assets/images/falling-snow1.png");
   -webkit-animation: snow 28s linear infinite;
   animation: snow 18s linear infinite;
   transition: opacity 5s;
+  pointer-events: none;
+}
+
+.user {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  width: 100%;
+  background: #fff;
+  padding: fn.vw(5) fn.vw(15);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 1px 12px 0px rgba(194, 194, 201, 0.25);
+  & div {
+    font-size: fn.vw(11);
+  }
+  & .avatar {
+    position: relative;
+    margin-left: auto;
+    & img {
+      width: fn.vw(35);
+      height: fn.vw(35);
+      border-radius: 50%;
+    }
+  }
+}
+
+.FBbutton {
+  background-color: #1877f2 !important;
+  color: #fff !important;
+  padding: fn.vw(5) fn.vw(10);
+  border-radius: fn.vw(5) !important;
+  font-weight: bold;
+  cursor: pointer;
+  width: fn.vw(200) !important;
+  height: fn.vw(18);
+  font-size: fn.vw(13);
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: fn.vw(1) fn.vw(0.3) fn.vw(2) rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.Photo {
+  & .wrapImage {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #d9d9d9;
+    margin-bottom: fn.vw(30);
+    & img {
+      max-width: 500px;
+      max-height: 500px;
+      object-fit: contain;
+    }
+  }
 }

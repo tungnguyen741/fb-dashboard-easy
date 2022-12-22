@@ -11,6 +11,7 @@
       "rootDir": ".",
       "baseUrl": ".",
       "allowSyntheticDefaultImports":true,
+      "lib": ["es5", "es6", "dom"],
       "paths":{
         "@/*": ["src/*"]
       }

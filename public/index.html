@@ -12,10 +12,10 @@
       try {
         window.fbAsyncInit = function () {
           FB.init({
-            appId: "554490519429981",
+            appId: "817071566056193",
             cookie: true,
             xfbml: true,
-            version: "v2.7",
+            version: "v2.0",
           });
 
           FB.AppEvents.logPageView();
@@ -39,9 +39,25 @@
     <script
       defer
       crossorigin="anonymous"
-      src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=554490519429981&autoLogAppEvents=1"
+      src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v9.0&appId=817071566056193&autoLogAppEvents=1"
       nonce="8zOYaKC0"
     ></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-Q4P0JZTLRG"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-Q4P0JZTLRG");
+    </script>
+
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>

@@ -1,112 +1,185 @@
-import React, { FC, Suspense, useEffect, useState } from "react";
-import styles from "./App.module.scss";
-import imgmottiny from "./assets/tiny1.png";
-import imgmot from "./assets/1.png";
-import img1 from "./assets/img-1.1mb.png";
-import img2 from "./assets/img-957kb.png";
-import img3 from "./assets/img-444kb.png";
-import img4 from "./assets/img-287kb.png";
-import CloseSvg from "./assets/close.svg";
+import React, { FC, Suspense, useState } from "react";
+import styles from "@/App.module.scss";
+import { Badge, Button, Loading } from "@/components";
+import { useGetFBFriends, useGetLoginStatus } from "@/hooks/useFacebookAPI";
+import * as FBAPI from "@/lib/FacebookAPI";
+import ReactGA from "react-ga";
+import Clock from "./components/Clock/Clock";
 
-import FlatIconSvg, {
-  ReactComponent as FlatIconSvgCom,
-} from "./assets/Flat_tick_icon.svg";
-const BadgeLazy = React.lazy(() => import("./components/Badge/Badge"));
-import { Badge, Button, LoginFBButton } from "@/components";
-// import { Badge, Button } from "./components";
-import { calcAddNumber } from "./utils";
-const Image = React.lazy(() => import("./components/Image/Image"));
+interface IPictureInfo {
+  data: {
+    height: number;
+    width: number;
+    is_silhouette: boolean;
+    url: string;
+  };
+}
+interface IUserFBInfo {
+  id: number;
+  name: string;
+  picture: IPictureInfo;
+  error?: Record<string, any>;
+  friends?: {
+    data?: any[];
+    summary?: {
+      total_count: number;
+    };
+  };
+  photos?: {
+    data?: any[];
+  };
+  email?: string;
+}
 
-console.log("calcAddNumber:", calcAddNumber);
+const userInfoInit = {
+  id: 0,
+  name: "",
+  picture: null,
+  error: null,
+  friends: null,
+  photos: null,
+  email: "",
+};
+
 const App: FC = () => {
-  const [counter, setCounter] = useState(0);
-  const [type, setType] = useState<"success" | "warning" | "danger">("success");
+  const [userFBInfo, setUserFBInfo] = useState<IUserFBInfo>(userInfoInit);
+  const [loading, setLoading] = useState(false);
+  const haveUserFBInfo = Object.values(userFBInfo).every(Boolean);
+  console.log("userFBInfo:", userFBInfo);
+  const [getFBFriends, FBfriends] = useGetFBFriends(`${userFBInfo.id}/friends`);
+  useGetLoginStatus([], async (res) =>
+    res.status === "connected" ? await getUserFBInfo() : null
+  );
 
-  const [connected, setConnected] = useState(false);
-  const [userLogged, setUserLogged] = useState({
-    name: "",
-    id: 0,
-  });
-  console.log("userLogged:", userLogged);
-  // console.log("CloseSvg", closeSvg);
-
-  useEffect(() => {
-    FB.getLoginStatus(function (response) {
-      console.log("response:", response);
-      if (response.status === "connected") {
-        setConnected(true);
-        FB.api("/me", function (response) {
-          setUserLogged((prev) => ({
-            ...prev,
-            id: response.id || 0,
-            name: response.name || "",
-          }));
-        });
-        return;
-      }
-      setConnected(false);
-    });
-  }, []);
-
-  const handleLoginFB = () => {
-    FB.login(function (response) {
-      if (response.authResponse) {
-        console.log("Welcome!  Fetching your information.... ");
-        FB.api("/me", function (response) {
-          setConnected(true);
-          setUserLogged((prev) => ({
-            ...prev,
-            name: response.name || "",
-            id: response.id || "",
-          }));
-        });
-      } else {
-        setConnected(false);
-      }
-    });
+  const getUserFBInfo = async (
+    fields = "id,name,picture,email,friends.limit(10){about,age_range,birthday,email,favorite_athletes,education,favorite_teams,first_name,hometown,gender,id,id_for_avatars,inspirational_people,install_type,installed,is_guest_user,languages,last_name,link,location,meeting_for,middle_name,name,name_format,payment_pricepoints,political,profile_pic,quotes,relationship_status,shared_login_upgrade_required_by,short_name,significant_other,sports,supports_donate_button_in_live_video,token_for_business,video_upload_limits,website,accounts},photos.limit(1000){id,created_time,images,icon,link,likes}"
+  ) => {
+    try {
+      setLoading(true);
+      const result = await FBAPI.getFacebookAPI<IUserFBInfo>("/me", {
+        fields,
+      });
+      console.log("result:", result);
+      // if (!result.error) {
+      setUserFBInfo(result);
+      // }
+    } catch (error) {
+      console.log("error:", error);
+      return error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLogoutFB = () => {
-    FB.logout(function (response) {
-      setConnected(false);
-      setUserLogged((prev) => ({
-        id: 0,
-        name: "",
-      }));
-      // user is now logged out
-    });
+  const handleLoginFB = async () => {
+    try {
+      const result = await FBAPI.handleLoginFB();
+      console.log("result:", result);
+      if (result.authResponse) {
+        await getUserFBInfo();
+      }
+    } catch (error) {}
   };
-  const handleGetInfo = () => {
-    FB.api(userLogged.id, (response) => {
-      console.log("response:", response);
-    });
+
+  const handleLogoutFB = async () => {
+    setUserFBInfo(userInfoInit);
+    await FBAPI.handleLogoutFB();
+  };
+
+  const Photo = ({ photos = [] }) => {
+    if (!photos.length) return null;
+
+    return (
+      <div className={styles.Photo}>
+        {photos.map((photo) => (
+          <div key={photo.id}>
+            <a href={photo.link} target="_blank">
+              <div className={styles.wrapImage}>
+                {photo?.images &&
+                  photo?.images.length &&
+                  photo?.images.slice(0, 1).map((img, index) => (
+                    <div key={index}>
+                      <img
+                        loading="lazy"
+                        src={img.source}
+                        alt=""
+                        width={img.width}
+                        height={img.height}
+                      />
+                    </div>
+                  ))}
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const FriendsCount = ({ friendCount = 0, email }) => {
+    return (
+      <div>
+        {email && (
+          <div>
+            Email: <b>{email}</b>
+          </div>
+        )}
+        {friendCount && (
+          <div>
+            Bạn có <b>{friendCount}</b> bạn bè
+          </div>
+        )}
+      </div>
+    );
+  };
+  const handleSendGA = () => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+    ReactGA.event({ category: 'abc', action: 'xyz' })
   };
 
   return (
     <>
-      {userLogged.name && (
-        <div>
-          Hi <b>{userLogged.name}</b> !, Welcome to Dashboard
+      {loading && <Loading />}
+
+      {haveUserFBInfo && (
+        <div className={styles.user}>
+          <div>
+            Hé lô bạn <b>{userFBInfo.name}</b> <br /> giữa trời đông cô đơn
+          </div>
+          <div className={styles.avatar}>
+            <img src={userFBInfo.picture?.data?.url} alt="" />
+          </div>
+          <Button onClick={handleLogoutFB}>Đăng xuất</Button>
         </div>
       )}
-      <div className={styles.App}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Button onClick={() => setCounter((prev) => prev - 1)}>-</Button>
-          <BadgeLazy type={type}>{counter}</BadgeLazy>
-          <Button onClick={() => setCounter((prev) => prev + 1)}>+</Button>
-          <div>
-            <Button onClick={() => setType("warning")}>Warning</Button>
-            <Button onClick={() => setType("danger")}>Danger</Button>
-            <Button onClick={() => setType("success")}>Success</Button>
-          </div>
-          {counter === 3 && <Image src={img1} />}
-        </Suspense>
 
-        {connected && <Button onClick={handleLogoutFB}>Đăng xuất</Button>}
-        {!connected && (
-          <Button onClick={handleLoginFB}>Đăng nhập với FB</Button>
+      <div className={styles.App}>
+        {!haveUserFBInfo && (
+          <>
+            <Button className={styles.FBbutton} onClick={handleLoginFB}>
+              Đăng nhập với Facebook
+            </Button>
+            <Button className={styles.FBbutton} onClick={handleSendGA}>
+              SEND GA
+            </Button>
+          </>
         )}
-        <Button onClick={handleGetInfo}>Get INFO</Button>
+        {haveUserFBInfo && (
+          <>
+            <FriendsCount
+              friendCount={userFBInfo.friends?.summary?.total_count || 0}
+              email={userFBInfo.email}
+            />
+            <Photo photos={userFBInfo.photos?.data || []} />
+            {/* <Clock /> */}
+            {/* <Button onClick={getFBFriends}>Lấy DS Bạn bè</Button> */}
+          </>
+        )}
+        {userFBInfo.error && (
+          <Badge className={styles.error} type="danger">
+            {userFBInfo.error?.message}
+          </Badge>
+        )}
       </div>
     </>
   );

@@ -1,0 +1,16 @@
+@use "sass:math"; //You can use "sass:math"
+
+$vw-viewport: 375px;
+
+@function strip-unit($number) {
+  @if type-of($number) == "number" and not unitless($number) {
+    @return math.div($number, ($number * 0 + 1));
+  }
+
+  @return $number;
+}
+
+@function vw($px-vw, $base-vw: $vw-viewport) {
+  @debug strip-unit($px-vw);
+  @return math.div(strip-unit($px-vw) * 100, strip-unit($base-vw)) * 1vw;
+}

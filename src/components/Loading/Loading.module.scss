@@ -1,0 +1,18 @@
+@use "src/assets/styles/functions" as fn;
+
+.Loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgb(244, 240, 240, 0.96);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+}

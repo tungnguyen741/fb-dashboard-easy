@@ -8,9 +8,12 @@ interface IBadge {
 export const Badge: React.FC<IBadge & HTMLAttributes<HTMLElement>> = ({
   children = null,
   type = "success",
+  className = "",
 }) => {
   return (
-    <div className={[styles.Badge, styles[`Badge__${type}`]].join(" ")}>
+    <div
+      className={[styles.Badge, styles[`Badge__${type}`], className].join(" ")}
+    >
       {children}
     </div>
   );

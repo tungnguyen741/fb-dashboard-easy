@@ -1,16 +1,17 @@
-.ButtonClassName {
+@use "src/assets/styles/functions" as fn;
+
+.Button {
   font-family: "Arial";
-  padding: 8px 20px;
-  border-radius: 10px;
+  padding: fn.vw(5x) fn.vw(15px);
+  border-radius: fn.vw(10px);
   background: #fff;
   color: #000;
-  width: 50px;
   text-align: center;
   &:hover {
     cursor: pointer;
   }
   &:active {
-    transform: translateY(-2px);
+    transform: translateY(2px);
   }
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */

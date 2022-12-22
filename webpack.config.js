@@ -21,7 +21,7 @@ const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 // DEVELOPMENT
 const DEV_SERVER_HTTPS = 'https';
 const DEV_SERVER_HOST = 'localhost.google.vn';
-const DEV_SERVER_PORT = 443;
+const DEV_SERVER_PORT = 444;
 const MEDIA_FOLDER_DEV = '[path][name].[ext]';
 // BUILDING
 const BUILD_FOLDER = 'dist';
@@ -31,6 +31,8 @@ const JS_FOLDER = "static/js/[name].[chunkhash].js";
 const JS_CHUNK_FOLDER = "static/js/[name].[chunkhash].chunk.js";
 const MEDIA_FOLDER = "static/media/[name].[hash:8].[ext]";
 const CSS_MODULE_NAME = `${base64.encode(utf8.encode(`${name}${version}`)).slice(-7)}-[folder]__[local]_[hash:base64:8]`;
+const DEV_CSS_MODULE_NAME = `${base64.encode(utf8.encode(`${name}${version}`)).slice(-7)}-[folder]__[local]_[hash:base64:8]`;
+// const DEV_CSS_MODULE_NAME = `[folder]__[local]_[hash:base64:3]`;
 
 const LOCAL_SERVER = `${DEV_SERVER_HTTPS}://${DEV_SERVER_HOST}:${DEV_SERVER_PORT}`
 const PROJECT_INFO = `${name}@${chalk.white.bold(version)}`
@@ -102,12 +104,21 @@ module.exports = (env, argv) => {
                                 url: true,
                                 esModule: false,
                                 modules: {
-                                    localIdentName: CSS_MODULE_NAME,
+                                    auto: /\.module\.\w+$/i,
+                                    localIdentName: devMode ? DEV_CSS_MODULE_NAME : CSS_MODULE_NAME,
                                 }
                             }
                         },  // to convert the resulting CSS to Javascript to be bundled (modules:true to rename CSS classes in output to cryptic identifiers, except if wrapped in a :global(...) pseudo class)
                         { loader: "postcss-loader" },  // to convert SASS to CSS
-                        { loader: "sass-loader" },  // to convert SASS to CSS
+                        {
+                            loader: 'resolve-url-loader',
+                        },
+                        {
+                            loader: "sass-loader",
+                            options: {
+                                sourceMap: true, // <-- !!IMPORTANT!!
+                            }
+                        },  // to convert SASS to CSS
                         // NOTE: The first build after adding/removing/renaming CSS classes fails, since the newly generated .d.ts typescript module is picked up only later
                     ]
                 },
